@@ -6,14 +6,22 @@ import { catchError, Observable, of } from 'rxjs';
   providedIn: 'root',
 })
 export class DeliveryApi {
-  getDeliveryInfo(numericValue: number) {
-    throw new Error('Method not implemented.');
-  }
-  constructor(private http: HttpClient) { }
+  
+  constructor(private http: HttpClient) {}
 
   createDelivery(payload: any): Observable<any> {
     return this.http
       .post<any>(`https://testologia.ru/delivery/create`, payload)
+      .pipe(
+        catchError((err) =>
+          of({ error: err?.error?.error ?? 'Ошибка при создании заявки' })
+        )
+      );
+  }
+
+  getDeliveryInfo(id: number): Observable<any> {
+    return this.http
+      .get<any>(`https://testologia.ru/delivery/info`, { params: { id: id.toString() } })
       .pipe(
         catchError((err) =>
           of({ error: err?.error?.error ?? 'Ошибка при создании заявки' })
